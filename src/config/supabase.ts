@@ -11,12 +11,38 @@
 
 import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import 'react-native-url-polyfill/auto'; // Necesario para que funcione en React Native
 
-// Estas variables vienen del archivo .env que vas a crear
-// NUNCA pongas las claves directamente acá (usá siempre .env)
-const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
+// Intentamos importar el polyfill, pero si falla (ej: en Expo Snack), continuamos
+try {
+  require('react-native-url-polyfill/auto');
+} catch (error) {
+  console.warn('react-native-url-polyfill no está disponible. Esto puede causar problemas con Supabase.');
+}
+
+// ========================================
+// CONFIGURACIÓN DE CREDENCIALES
+// ========================================
+
+// OPCIÓN 1: Variables de entorno (para Expo Go local)
+// Las variables vienen del archivo .env
+let SUPABASE_URL = process.env.SUPABASE_URL || '';
+let SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
+
+// OPCIÓN 2: Valores hardcodeados (para Expo Snack)
+// Si las variables de entorno están vacías, podés poner tus credenciales acá:
+// ⚠️ SOLO para testing en Snack. NUNCA hagas esto en producción.
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  // Descomentá y reemplazá con tus credenciales reales para usar en Snack:
+  // SUPABASE_URL = 'https://tuproyecto.supabase.co';
+  // SUPABASE_ANON_KEY = 'eyJhbGc...tu-key-completa-aqui';
+
+  console.warn(
+    '⚠️ Credenciales de Supabase no configuradas.\n' +
+    'Para Expo Go local: Creá un archivo .env con tus credenciales.\n' +
+    'Para Expo Snack: Descomentá y editá las líneas en src/config/supabase.ts'
+  );
+}
 
 /**
  * Cliente de Supabase
